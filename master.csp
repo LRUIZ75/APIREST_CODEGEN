@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<codeSmith xmlns="http://www.codesmithtools.com/schema/csp.xsd">
+  <propertySets>
+    <propertySet name="master.js" output="master.js" template="C:\Users\lruiz\Documents\CONSULTORIAS\master.cst">
+      <property name="OutputDirectory">.\RootFolder</property>
+      <property name="FilesPrefix">modelname</property>
+      <property name="ModelName">ModelName</property>
+      <property name="ModelDescription">a model name item</property>
+      <property name="IncludePictureSetterGetter">True</property>
+      <property name="PictureFieldName">picture</property>
+      <property name="UploadPath">./uploads/pictures/</property>
+      <property name="SchemaDef">["propertyName:","type: Boolean","example:","type: String"]</property>
+    </propertySet>
+  </propertySets>
+</codeSmith>

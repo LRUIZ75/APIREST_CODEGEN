@@ -1,0 +1,95 @@
+﻿<%-- 
+CodeSmith NodeJs API Restful Templates
+Author: Luis Danilo Ruiz Tórrez
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="JavaScript" Description="Generates a set of model - controller - routes." OutputType="None" %>
+
+<%@ Property Name="OutputDirectory" Type="System.String" Default=".\RootFolder" Category="3. Output Options" Description="Path to root folder." %>
+<%@ Property Name="FilesPrefix" Type="System.String" Default="modelname" Category="3. Output Options" Description="Defines what prefix to be used with outputs files." %>
+
+<%@ Property Name="ModelName" Type="System.String" Default="ModelName" Category="1. Model Options" Description="Model name. plural and PascalCase recommended" %>
+<%@ Property Name="ModelDescription" Type="System.String" Default="a model name item" Category="1. Model Options" Description="model item description" %>
+<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Default="true" Category="2. Getter & Setter for Images" Description="include setter and getter for images?" %>
+<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="2. Getter & Setter for Images" Description="Image fieldname as in data model" %>
+<%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="2. Getter & Setter for Images" Description="Path to upload folder for image file" %>
+
+<%@ Property Name="SchemaDef" Type="List<String>" Category="1. Model Options" Optional="True" Default="['propertyName:','type: Boolean','example:','type: String']"
+Description="Schema definitions: even lines are properties as in ""fieldname:"" - odd lines are typedefs as in ""type: <datatype>""" %>
+
+
+<%@ Register Name="ControllerTemplate" Template="node_controller.cst" %>
+<%@ Register Name="ModelTemplate" Template="node_model.cst" %>
+<%@ Register Name="RouterTemplate" Template="node_routes.cst" %>
+
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Design" %>
+<%@ Import NameSpace="System.IO" %>
+
+<script runat="template">
+
+private int _currentStep = 0;
+// Override the Render method and have it output the sub-templates to file.
+public override void Render(TextWriter writer)
+{
+    this.Progress.MaximumValue = 375;
+    
+
+    
+    DateTime startTime = DateTime.Now;
+    
+    if (!Directory.Exists(OutputDirectory))
+    {
+        // Create output directory.
+        Trace.WriteLine("Creating output directory...");
+        Directory.CreateDirectory(this.OutputDirectory);
+        Directory.CreateDirectory(this.OutputDirectory + "\\controllers");
+        Directory.CreateDirectory(this.OutputDirectory + "\\models");
+        Directory.CreateDirectory(this.OutputDirectory + "\\routes");
+
+    }
+
+    this.Progress.Value = 10;
+    
+    // Controller
+    Trace.WriteLine("Building controller documentation...");
+    ControllerTemplate ControllerTemplate = this.Create<ControllerTemplate>();
+    ControllerTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
+    this.CopyPropertiesTo(ControllerTemplate);
+    ControllerTemplate.RenderToFile(this.OutputDirectory + "\\controllers\\" +  FilesPrefix + ".controller.js", true);
+    this.Progress.Value = 33;
+    
+    // Router
+    Trace.WriteLine("Building routes documentation...");
+    RouterTemplate RouterTemplate = this.Create<RouterTemplate>();
+    RouterTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
+    this.CopyPropertiesTo(RouterTemplate);
+    RouterTemplate.RenderToFile(this.OutputDirectory + "\\routes\\" +  FilesPrefix + ".routes.js", true);
+    this.Progress.Value = 66;
+    _currentStep++;
+    
+    // Model
+    Trace.WriteLine("Building model documentation...");
+    ModelTemplate ModelTemplate = this.Create<ModelTemplate>();
+    ModelTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
+    this.CopyPropertiesTo(ModelTemplate);
+    ModelTemplate.RenderToFile(this.OutputDirectory + "\\models\\" +  FilesPrefix+ ".model.js", true);
+    this.Progress.Value = 100;
+    _currentStep++;
+    
+    
+    Trace.WriteLine("Generation complete. Execution time: " + (DateTime.Now - startTime).ToString());
+    Trace.WriteLine("To view the output go here: " + this.OutputDirectory);
+}
+
+public void OnProgress(object sender, ProgressEventArgs e)
+{
+    if (e.Value > 0)
+    {
+        this.Progress.Value = 75 + (_currentStep * 100) + (int)(((Double)e.Value / (Double)e.MaximumValue) * 100);
+    }
+}
+
+</script>
+
+
+
