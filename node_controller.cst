@@ -358,11 +358,11 @@ var <%= modelName %>Controller = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>/logo/{id}:
+     * /api/<%= modelName %>/<%= PictureFieldName %>/{id}:
      *   put:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Upload <%= ModelDescription %> logo
+     *     description: Upload <%= ModelDescription %> <%= PictureFieldName %>
      *     security:
      *       - bearerAuth: []
      *     parameters:
@@ -372,7 +372,7 @@ var <%= modelName %>Controller = {
      *         type: string
      *         required: true
      *       - in: form-data
-     *         name: logo
+     *         name: <%= PictureFieldName %>
      *         required: true
      *         content:
      *           file:
@@ -489,11 +489,11 @@ var <%= modelName %>Controller = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>/logo/{filename}:
+     * /api/<%= modelName %>/<%= PictureFieldName %>/{filename}:
      *   get:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Get general <%= ModelDescription %> logo by filename
+     *     description: Get <%= ModelDescription %> <%= PictureFieldName %> by filename
      *     parameters:
      *       - in: path
      *         name: filename
