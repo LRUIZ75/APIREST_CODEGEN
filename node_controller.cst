@@ -4,6 +4,7 @@ Author: Luis Danilo Ruiz Tórrez
 Description: Agregar los métodos CRUD para un controlador de API basado en Node.js
 --%>
 <%@ Template Language="CS" TargetLanguage="JavaScript" Description="Genera un controlador api para un modelo de datos"%>
+<%@ Property Name="UseAuthMiddleware" Type="System.Boolean" Default="true" Category="1. General Options" Description="Usar middleware de autenticación en el controlador y rutas?" %>
 <%@ Property Name="ModelName" Type="System.String" Category="Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
 <%@ Property Name="ModelDescription" Type="System.String"  Category="Options" Description="Descripción del modelo" %>
 <%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="Images" Description="Incluir los métodos set y get para imágenes??" %>
@@ -14,9 +15,13 @@ Description: Agregar los métodos CRUD para un controlador de API basado en Node
 
 <script runat="template">
 // My methods here.
-public string SampleMethod()
+
+
+public string AuthOpenApi()
 {
-  return "Method output.";
+   if(this.UseAuthMiddleware)
+       return "\n     *     security:\n     *       - ApiKeyAuth: []";
+   return "";
 }
 </script>
 
@@ -47,9 +52,7 @@ var <%= modelName %>Controller = {
      *   get:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Get <%= ModelDescription %> by Id
-     *     security:
-     *       - ApiKeyAuth: []
+     *     description: Get <%= ModelDescription %> by Id <%=AuthOpenApi()%>
      *     parameters:
      *       - in: path
      *         name: id
@@ -76,9 +79,7 @@ var <%= modelName %>Controller = {
      *   get:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Get list of <%= ModelDescription %>
-     *     security:
-     *       - ApiKeyAuth: []
+     *     description: Get list of <%= ModelDescription %><%=AuthOpenApi()%>
      *     responses:
      *       200:
      *         description: OK
@@ -142,9 +143,7 @@ var <%= modelName %>Controller = {
      *   post:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Create <%= ModelDescription %>
-     *     security:
-     *       - bearerAuth: []
+     *     description: Create <%= ModelDescription %><%=AuthOpenApi()%>
      *     parameters:
      *       - in: body
      *         required: true
@@ -215,9 +214,7 @@ var <%= modelName %>Controller = {
      *   put:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Update <%= ModelDescription %>
-     *     security:
-     *       - bearerAuth: []
+     *     description: Update <%= ModelDescription %><%=AuthOpenApi()%>
      *     parameters:
      *       - in: path
      *         name: id
@@ -294,9 +291,7 @@ var <%= modelName %>Controller = {
      *   delete:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Delete <%= ModelDescription %> by id
-     *     security:
-     *       - bearerAuth: []
+     *     description: Delete <%= ModelDescription %> by id<%=AuthOpenApi()%>
      *     parameters:
      *       - in: path
      *         name: id
@@ -362,9 +357,7 @@ var <%= modelName %>Controller = {
      *   put:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Upload <%= ModelDescription %> <%= PictureFieldName %>
-     *     security:
-     *       - bearerAuth: []
+     *     description: Upload <%= ModelDescription %> <%= PictureFieldName %><%=AuthOpenApi()%>
      *     parameters:
      *       - in: path
      *         name: id

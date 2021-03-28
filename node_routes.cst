@@ -4,18 +4,31 @@ Author: Luis Danilo Ruiz Tórrez
 Description: Agregar las rutas parciales para un controlador y su modelo
 --%>
 <%@ Template Language="CS" TargetLanguage="JavaScript" Description="Genera las rutas para el controlador anterior"%>
+<%@ Property Name="UseAuthMiddleware" Type="System.Boolean" Default="true" Category="1. General Options" Description="Usar middleware de autenticación en el controlador y rutas?" %>
 <%@ Property Name="ModelName" Type="System.String" Category="Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
 <%@ Property Name="ModelDescription" Type="System.String"  Category="Options" Description="Descripción del modelo" %>
 <%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="Images" Description="Incluir los métodos set y get para imágenes??" %>
 <%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="Images" Description="Ruta de carga de la imagen" %>
 <%@ Import Namespace="System"%>
 <%    string modelName = ModelName.ToLower(); %>
+<script runat="template">
+// My methods here.
+
+
+public string AuthOpenApi()
+{
+   if(this.UseAuthMiddleware)
+       return " verify,";
+   return "";
+}
+</script>
 
 'use strict'
 
 var express = require('express');
-
+<% if(this.UseAuthMiddleware){ %>
 const { verify } = require('../middelware/access.middleware');
+<% } %>
 
 var <%= modelName %>Controller = require('../controllers/<%= modelName %>.controller');
 
@@ -34,16 +47,16 @@ D for Delete: HTTP DELETE
 
 
 // <%= ModelName.ToUpper()  %>
-router.post('/<%= modelName %>', verify, <%= modelName %>Controller.add<%= ModelName %>); //CREATE
+router.post('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.add<%= ModelName %>); //CREATE
 
-<%if(IncludePictureSetterGetter){ %>router.put('/<%= modelName %>/picture/:id', [verify, md_uploadpictures], <%= modelName %>Controller.setPicture); //UPDATE IMAGE <%} %>
-router.put('/<%= modelName %>/:id', verify, <%= modelName %>Controller.edit<%= ModelName %>); //UPDATE
+<%if(IncludePictureSetterGetter){ %>router.put('/<%= modelName %>/picture/:id', [<%=AuthOpenApi()%> md_uploadpictures], <%= modelName %>Controller.setPicture); //UPDATE IMAGE <%} %>
+router.put('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.edit<%= ModelName %>); //UPDATE
 
-router.get('/<%= modelName %>/:id?', verify,<%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
-router.get('/<%= modelName %>', verify, <%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
+router.get('/<%= modelName %>/:id?', <%=AuthOpenApi()%><%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
+router.get('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
 <%if(IncludePictureSetterGetter){ %>router.get('/<%= modelName %>/picture/:filename', <%= modelName %>Controller.getPicture); //RETRIEVE IMAGE <%} %>
 
-router.delete('/<%= modelName %>/:id', verify, <%= modelName %>Controller.delete<%= ModelName %>); //DELETE
+router.delete('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.delete<%= ModelName %>); //DELETE
 
 
 module.exports = router;

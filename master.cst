@@ -7,7 +7,11 @@ Author: Luis Danilo Ruiz Tórrez
 <%@ Property Name="OutputDirectory" Type="System.String" Default=".\RootFolder" Category="3. Output Options" Description="Path to root folder." %>
 <%@ Property Name="FilesPrefix" Type="System.String" Default="modelname" Category="3. Output Options" Description="Defines what prefix to be used with outputs files." %>
 
-<%@ Property Name="ModelName" Type="System.String" Default="ModelName" Category="1. Model Options" Description="Model name. plural and PascalCase recommended" %>
+<%@ Property Name="GenerateModel" Type="System.Boolean" Default="true" Category="1. General Options" Description="Generar Modelo?" %>
+<%@ Property Name="GenerateController" Type="System.Boolean" Default="true" Category="1. General Options" Description="Generar Controlador?" %>
+<%@ Property Name="UseAuthMiddleware" Type="System.Boolean" Default="true" Category="1. General Options" Description="Usar middleware de autenticación en el controlador y rutas?" %>
+<%@ Property Name="GenerateRoute" Type="System.Boolean" Default="true" Category="1. General Options" Description="General Rutas?" %>
+<%@ Property Name="ModelName" Type="System.String" Default="Modelname"  Category="1. Model Options" Description="Nombre del modelo." %>
 <%@ Property Name="ModelDescription" Type="System.String" Default="a model name item" Category="1. Model Options" Description="model item description" %>
 <%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Default="true" Category="2. Getter & Setter for Images" Description="include setter and getter for images?" %>
 <%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="2. Getter & Setter for Images" Description="Image fieldname as in data model" %>
@@ -42,37 +46,47 @@ public override void Render(TextWriter writer)
         // Create output directory.
         Trace.WriteLine("Creating output directory...");
         Directory.CreateDirectory(this.OutputDirectory);
-        Directory.CreateDirectory(this.OutputDirectory + "\\controllers");
-        Directory.CreateDirectory(this.OutputDirectory + "\\models");
-        Directory.CreateDirectory(this.OutputDirectory + "\\routes");
+        if(this.GenerateController)
+            Directory.CreateDirectory(this.OutputDirectory + "\\controllers");
+        if(this.GenerateModel)
+            Directory.CreateDirectory(this.OutputDirectory + "\\models");
+        if(this.GenerateRoute)
+            Directory.CreateDirectory(this.OutputDirectory + "\\routes");
 
     }
 
     this.Progress.Value = 10;
     
     // Controller
-    Trace.WriteLine("Building controller documentation...");
-    ControllerTemplate ControllerTemplate = this.Create<ControllerTemplate>();
-    ControllerTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
-    this.CopyPropertiesTo(ControllerTemplate);
-    ControllerTemplate.RenderToFile(this.OutputDirectory + "\\controllers\\" +  FilesPrefix + ".controller.js", true);
+    if(this.GenerateController){
+        Trace.WriteLine("Building controller documentation...");
+        ControllerTemplate ControllerTemplate = this.Create<ControllerTemplate>();
+        ControllerTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
+        this.CopyPropertiesTo(ControllerTemplate);
+        ControllerTemplate.RenderToFile(this.OutputDirectory + "\\controllers\\" +  FilesPrefix + ".controller.js", true);
+    }
     this.Progress.Value = 33;
     
     // Router
-    Trace.WriteLine("Building routes documentation...");
-    RouterTemplate RouterTemplate = this.Create<RouterTemplate>();
-    RouterTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
-    this.CopyPropertiesTo(RouterTemplate);
-    RouterTemplate.RenderToFile(this.OutputDirectory + "\\routes\\" +  FilesPrefix + ".routes.js", true);
+    if(this.GenerateRoute){
+        Trace.WriteLine("Building routes documentation...");
+        RouterTemplate RouterTemplate = this.Create<RouterTemplate>();
+        RouterTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
+        this.CopyPropertiesTo(RouterTemplate);
+        RouterTemplate.RenderToFile(this.OutputDirectory + "\\routes\\" +  FilesPrefix + ".routes.js", true);
+    }
+    
     this.Progress.Value = 66;
     _currentStep++;
     
     // Model
-    Trace.WriteLine("Building model documentation...");
-    ModelTemplate ModelTemplate = this.Create<ModelTemplate>();
-    ModelTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
-    this.CopyPropertiesTo(ModelTemplate);
-    ModelTemplate.RenderToFile(this.OutputDirectory + "\\models\\" +  FilesPrefix+ ".model.js", true);
+    if(this.GenerateModel){
+        Trace.WriteLine("Building model documentation...");
+        ModelTemplate ModelTemplate = this.Create<ModelTemplate>();
+        ModelTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
+        this.CopyPropertiesTo(ModelTemplate);
+        ModelTemplate.RenderToFile(this.OutputDirectory + "\\models\\" +  FilesPrefix+ ".model.js", true);
+    }
     this.Progress.Value = 100;
     _currentStep++;
     
