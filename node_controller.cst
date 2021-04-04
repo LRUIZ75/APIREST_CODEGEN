@@ -146,6 +146,7 @@ var <%= modelName %>Controller = {
      *     description: Create <%= ModelDescription %><%=AuthOpenApi()%>
      *     parameters:
      *       - in: body
+     *         name: body
      *         required: true
      *         schema:
      *           $ref: "#/components/schemas/<%= ModelName %>"
@@ -222,6 +223,7 @@ var <%= modelName %>Controller = {
      *         type: string
      *         required: true
      *       - in: body
+     *         name: body
      *         required: true
      *         schema:
      *           $ref: "#/components/schemas/<%= ModelName %>"
