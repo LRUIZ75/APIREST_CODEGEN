@@ -360,20 +360,21 @@ var <%= modelName %>Controller = {
      *     tags: 
      *       - <%= ModelName %>
      *     description: Upload <%= ModelDescription %> <%= PictureFieldName %><%=AuthOpenApi()%>
+     *     requestBody:
+     *       content:
+     *         multipart/form-data:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               <%= PictureFieldName %>:
+     *                 type: string
+     *                 format: base64
      *     parameters:
      *       - in: path
      *         name: id
      *         description: "Object Id"
      *         type: string
      *         required: true
-     *       - in: form-data
-     *         name: <%= PictureFieldName %>
-     *         required: true
-     *         content:
-     *           file:
-     *             schema:
-     *               type: string
-     *               format: base64
      *     responses:
      *       200:
      *         description: Ok
