@@ -14,7 +14,9 @@ Description="Requiere de dos líneas por campo; 1. Nombre del campo seguido de "
 <%@ Import Namespace="CodeSmith.CustomProperties" %>
 <%@ Import Namespace="CodeSmith.BaseTemplates" %>
 <%@ Import Namespace="System.Collections.Generic" %>
-
+<% DateTime startTime = DateTime.Now;%>
+// Last Updated: <%= startTime %>
+// Updated By  : @YourName
 'use strict'
 
 const mongoose = require('mongoose');

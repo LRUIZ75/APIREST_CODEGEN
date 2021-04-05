@@ -11,8 +11,8 @@ Description: Agregar los métodos CRUD para un controlador de API basado en Node
 <%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="Images" Description="Nombre del campo imagen" %>
 <%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="Images" Description="Ruta de carga de la imagen" %>
 <%@ Import Namespace="System"%>
+<%@ Import NameSpace="System.IO" %>
 <%    string modelName = ModelName.ToLower(); %>
-
 <script runat="template">
 // My methods here.
 
@@ -23,9 +23,12 @@ public string AuthOpenApi()
        return "\n     *     security:\n     *       - ApiKeyAuth: []";
    return "";
 }
-</script>
 
+</script>
 <%-- INICIA EL CONTROLADOR --%>
+<% DateTime startTime = DateTime.Now;%>
+// Last Updated: <%= startTime %>
+// Updated By  : @YourName
 'use strict'
 
 const os = require('os');

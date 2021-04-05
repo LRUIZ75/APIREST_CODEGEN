@@ -22,7 +22,9 @@ public string AuthOpenApi()
    return "";
 }
 </script>
-
+<% DateTime startTime = DateTime.Now;%>
+// Last Updated: <%= startTime %>
+// Updated By  : @YourName
 'use strict'
 
 var express = require('express');
