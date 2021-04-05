@@ -112,7 +112,7 @@ var <%= modelName %>Controller = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 })
                 );
             }
@@ -173,7 +173,7 @@ var <%= modelName %>Controller = {
 
             return (res.status(400).send({
                 status: "error",
-                messager: "Faltan parámetros de request en formato JSON"
+                message: "Faltan parámetros de request en formato JSON"
             })
             );
         }
@@ -188,7 +188,7 @@ var <%= modelName %>Controller = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
 
             } else {
@@ -266,7 +266,7 @@ var <%= modelName %>Controller = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
             }
 
@@ -331,7 +331,7 @@ var <%= modelName %>Controller = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    error: err.message
+                    message: err.message
                 }));
             }
 
@@ -444,7 +444,7 @@ var <%= modelName %>Controller = {
 
                         return res.status(500).send({
                             status: 'error',
-                            error: err
+                            message: err.message
                         });
                     }
 
