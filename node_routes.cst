@@ -8,6 +8,7 @@ Description: Agregar las rutas parciales para un controlador y su modelo
 <%@ Property Name="ModelName" Type="System.String" Category="Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
 <%@ Property Name="ModelDescription" Type="System.String"  Category="Options" Description="Descripción del modelo" %>
 <%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="Images" Description="Incluir los métodos set y get para imágenes??" %>
+<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="Images" Description="Nombre del campo imagen" %>
 <%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="Images" Description="Ruta de carga de la imagen" %>
 <%@ Import Namespace="System"%>
 <%    string modelName = ModelName.ToLower(); %>
@@ -51,7 +52,7 @@ D for Delete: HTTP DELETE
 // <%= ModelName.ToUpper()  %>
 router.post('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.add<%= ModelName %>); //CREATE
 
-<%if(IncludePictureSetterGetter){ %>router.put('/<%= modelName %>/picture/:id', [<%=AuthOpenApi()%> md_uploadpictures], <%= modelName %>Controller.setPicture); //UPDATE IMAGE <%} %>
+<%if(IncludePictureSetterGetter){ %>router.put('/<%= modelName %>/:field/:id', [<%=AuthOpenApi()%> md_uploadpictures], <%= modelName %>Controller.setPicture); //UPDATE IMAGE <%} %>
 router.put('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.edit<%= ModelName %>); //UPDATE
 
 router.get('/<%= modelName %>/:id?', <%=AuthOpenApi()%><%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE

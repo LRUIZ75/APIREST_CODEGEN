@@ -358,7 +358,7 @@ var <%= modelName %>Controller = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>/<%= PictureFieldName %>/{id}:
+     * /api/<%= modelName %>/{field}/{id}:
      *   put:
      *     tags: 
      *       - <%= ModelName %>
@@ -373,6 +373,12 @@ var <%= modelName %>Controller = {
      *                 type: string
      *                 format: base64
      *     parameters:
+     *       - in: path
+     *         name: field
+     *         description: "fieldname for picture"
+     *         type: string
+     *         default: "insuranceCard"
+     *         required: true
      *       - in: path
      *         name: id
      *         description: "Object Id"
@@ -399,6 +405,7 @@ var <%= modelName %>Controller = {
         //recojer fichero de petición
         var file_name = 'Imagen no proporcionada...';
         var id = req.params.id;
+        var fieldname = req.params.field;
 
         // console.log(req.files);
 
@@ -409,12 +416,23 @@ var <%= modelName %>Controller = {
                 file_name
             });
         }
-        if (!id) {
 
-            return res.status(400).send({
-                status: 'error',
-                message: 'No hay parámetro: Id'
-            });
+        if (!id || !fieldname) {
+          return res.status(400).send({
+            status: "error",
+            message: "Parámetros de ruta, son incorrectos",
+          });
+        }
+
+
+        //TODO: Revisar y controlar los campos válidos para imagenes de la colección
+        var validFields = ["picture"];
+
+        if (!(fieldname in validFields)) {
+          return res.status(400).send({
+            status: "error",
+            message: "Parámetros de ruta, son incorrectos"
+          });
         }
 
         //conseguir nombre y extensión del archivo
@@ -422,77 +440,84 @@ var <%= modelName %>Controller = {
 
         var file_name = path.basename(file_path);
 
-        var file_ext = path.extname(file_name);
+        var file_ext = path.extname(file_name).toLowerCase();
+        var oldValue = "";
 
+        const validExtensions = ['.png','.jpg', '.jpeg', '.webp', '.gif'];
+        if (validExtensions.includes(file_ext)) 
+          {
+            //Archivo aceptable
 
-        console.log(file_ext);
+            var query = { _id: { $eq: id } };
+            // licenseCard | insuranceCard
 
-        switch (file_ext) {
-            case '.png':
-            case '.jpg':
-            case '.jpeg':
-            case '.gif':
-                //Archivo aceptable
+            var command = { $set: { [fieldname]: file_name } };
 
-
-                var query = { '_id': { $eq: id } };
-                var command = { $set: { '<%= PictureFieldName %>': file_name } };
-
-
-                <%= modelName %>Model.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
-
-                    if (err) {
-
-                        fs.unlinkSync(file_path);
-
-                        return res.status(500).send({
-                            status: 'error',
-                            message: err.message
-                        });
-                    }
-
-                    if (!updatedObject) {
-
-                        fs.unlinkSync(file_path);
-
-                        return res.status(404).send({
-                            status: 'error',
-                            message: 'No se pudo encontrar el registro'
-                        });
-                    }
-
-                    return res.status(200).send({
-                        status: 'ok',
-                        updated: updatedObject
-                    });
-                });
-                break;
-
-            default:
-                //Archivo no aceptado
-
-                //Borrar el archivo
-
+            <%= modelName %>.findOne(query, (err, doc) => {
+                if (err)
+                  return res.status(500).send({
+                    status: "error",
+                    message: err.message,
+                  });
+                if (doc) {
+                  var object = JSON.parse(JSON.stringify(doc._doc));
+                  oldvalue = object[fieldname];
+                  oldvalue = "/uploads/picture/" + oldvalue;
+                  console.log(`Deleting: ${oldvalue}`);
+                  fs.unlinkSync(oldvalue);
+                 }});
+         <%= modelName %>.findOneAndUpdate(
+            query,
+            command,
+            { new: true },
+            (err, updatedObject) => {
+              if (err) {
                 fs.unlinkSync(file_path);
 
-                return res.status(400).send({
-                    status: 'error',
-                    message: 'Tipo de archivo no es imagen',
-                    file_name
-                }
-                );
-                break;
-        };
+                return res.status(500).send({
+                  status: "error",
+                  message: err.message,
+                });
+              }
+
+              if (!updatedObject) {
+                fs.unlinkSync(file_path);
+
+                return res.status(404).send({
+                  status: "error",
+                  message: "No se pudo encontrar el registro",
+                });
+              }
+
+              return res.status(200).send({
+                status: "ok",
+                updated: updatedObject,
+              });
+            }
+          );
+        } else {
+          //Archivo no aceptado
+
+          //Borrar el archivo
+
+          fs.unlinkSync(file_path);
+
+          return res.status(400).send({
+            status: "error",
+            message: "Tipo de archivo no es imagen",
+            file_name,
+          });
+        }
     },
 
 
     /**
      * @openapi
-     * /api/<%= modelName %>/<%= PictureFieldName %>/{filename}:
+     * /api/<%= modelName %>/picture/{filename}:
      *   get:
      *     tags: 
      *       - <%= ModelName %>
-     *     description: Get <%= ModelDescription %> <%= PictureFieldName %> by filename
+     *     description: Get <%= ModelDescription %> picture(s) by filename
      *     parameters:
      *       - in: path
      *         name: filename
