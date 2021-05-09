@@ -19,7 +19,7 @@ Description: Agregar las rutas parciales para un controlador y su modelo
 public string AuthOpenApi()
 {
    if(this.UseAuthMiddleware)
-       return " verify,";
+       return " verify(),";
    return "";
 }
 </script>

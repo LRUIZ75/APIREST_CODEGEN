@@ -1,15 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <codeSmith xmlns="http://www.codesmithtools.com/schema/csp.xsd">
   <propertySets>
-    <propertySet name="master.js" output="master.js" template="C:\Users\lruiz\Documents\CONSULTORIAS\master.cst">
-      <property name="OutputDirectory">.\RootFolder</property>
-      <property name="FilesPrefix">modelname</property>
-      <property name="ModelName">ModelName</property>
-      <property name="ModelDescription">a model name item</property>
+    <propertySet name="master.js" output="master.js" template="C:\Users\lruiz\Documents\CONSULTORIAS\API CODEGEN\master.cst">
+      <property name="OutputDirectory">C:\Users\lruiz\Documents\CONSULTORIAS\TRACEORGANIC API</property>
+      <property name="FilesPrefix">person</property>
+      <property name="GenerateModel">True</property>
+      <property name="GenerateController">True</property>
+      <property name="UseAuthMiddleware">False</property>
+      <property name="GenerateRoute">True</property>
+      <property name="ModelName">Person</property>
+      <property name="ModelDescription">People entitiy</property>
       <property name="IncludePictureSetterGetter">True</property>
       <property name="PictureFieldName">picture</property>
       <property name="UploadPath">./uploads/pictures/</property>
-      <property name="SchemaDef">["propertyName:","type: Boolean","example:","type: String"]</property>
+      <property name="SchemaDef">["names:","type: String","lastNames:","type: String","idType:","type: String","idNumber:","type: String","genre:","type: String","birthDate:","type: Date","picture:","type: String"]</property>
     </propertySet>
   </propertySets>
 </codeSmith>
