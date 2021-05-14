@@ -31,13 +31,13 @@ public string AuthOpenApi()
 // Updated By  : @YourName
 'use strict'
 
-const os = require('os');
 const <%= modelName %>Model = require('../models/<%= modelName %>.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
 const { findOneAndDelete } = require('../models/<%= modelName %>.model');
+const  MSG  = require("../modules/message.module");
 
 
 /**
@@ -124,7 +124,7 @@ var <%= modelName %>Controller = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    message: err.message
+                    message: MSG["500"] + err.message
                 })
                 );
             }
@@ -133,8 +133,8 @@ var <%= modelName %>Controller = {
  
                 return (res.status(404).send({
                     status: "error",
-                    message: "Registro(s) no encontrado(s)",
-                    links: [{ "Agregar registro => curl -X POST ": global.baseURL + "/api/<%= modelName %>" }]
+                    message: MSG["NO-DATA"],
+                    links: [ process.env.API_URL + "doc/#/<%= ModelName %>/post_api_<%= modelName %>" ]    
                 }
 
                 ));
@@ -142,7 +142,7 @@ var <%= modelName %>Controller = {
 
                 return (res.status(200).send({
                     status: "ok",
-                    objects: objects
+                    data: objects
                 }));
             }
         });
@@ -193,7 +193,7 @@ var <%= modelName %>Controller = {
 
             return (res.status(400).send({
                 status: "error",
-                message: "Faltan parámetros de request en formato JSON"
+                message: MSG["NO-BODY"]
             })
             );
         }
@@ -208,20 +208,20 @@ var <%= modelName %>Controller = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    message: err.message
+                    message: MSG["500"] + err.message
                 }));
 
             } else {
                 if (!storedObject) {
                     return (res.status(500).send({
                         status: "error",
-                        message: "Error al intentar guardar un nuevo registro"
+                        message: MSG["500"] + err.message
                     }));
                 }
 
                 return (res.status(201).send({
                     status: "ok",
-                    created: storedObject
+                    data: storedObject
                 }));
             }
 
@@ -279,13 +279,13 @@ var <%= modelName %>Controller = {
         if (!id || id == undefined) {
             return (res.status(400).send({
                 status: "error",
-                message: "falta parámetro requerido ID"
+                message: MSG["NO-PARAM"]
             }));
         }
         if (!data || data == undefined) {
             return (res.status(400).send({
                 status: "error",
-                message: "falta parámetro requerido data JSON"
+                message: MSG["NO-BODY"]
             }));
         }
 
@@ -296,7 +296,7 @@ var <%= modelName %>Controller = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    message: err.message
+                    message: MSG["ERROR"] + err.message
                 }));
             }
 
@@ -304,13 +304,13 @@ var <%= modelName %>Controller = {
 
                 return (res.status(404).send({
                     status: "error",
-                    message: "No se encontró el registro a modificar"
+                    message: MSG["NO-DATA"]
                 }));
             }
 
             return (res.status(200).send({
                 status: "ok",
-                updated: updatedObject
+                data: updatedObject
             }));
 
         });
@@ -359,7 +359,7 @@ var <%= modelName %>Controller = {
         if (!id || id == undefined) {
             return (res.status(400).send({
                 status: "error",
-                message: "falta parámetro requerido ID"
+                message: MSG["NO-PARAM"]
             }));
         }
 
@@ -369,7 +369,7 @@ var <%= modelName %>Controller = {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
-                    message: err.message
+                    message: MSG["500"] + err.message
                 }));
             }
 
@@ -377,13 +377,13 @@ var <%= modelName %>Controller = {
 
                 return (res.status(404).send({
                     status: "error",
-                    message: "No se encontró el registro a eliminar"
+                    message: MSG["NO-DATA"]
                 }));
             }
 
             return (res.status(200).send({
                 status: "ok",
-                deleted: deletedObject
+                data: deletedObject
             }));
 
         });
@@ -404,15 +404,15 @@ var <%= modelName %>Controller = {
      *           schema:
      *             type: object
      *             properties:
-     *               <%= PictureFieldName %>:
+     *               picture:
      *                 type: string
      *                 format: base64
      *     parameters:
      *       - in: path
      *         name: field
-     *         description: "fieldname for picture"
+     *         description: "fieldname for image"
      *         type: string
-     *         default: "insuranceCard"
+     *         default: "<%= PictureFieldName %>"
      *         required: true
      *       - in: path
      *         name: id
@@ -430,6 +430,8 @@ var <%= modelName %>Controller = {
      *         description: Bad Request
      *       404:
      *         description: Not Found
+     *       415:
+     *         description: Unsupported Media Type
      *       500:
      *         description: Internal Server Error
      */
@@ -456,15 +458,14 @@ var <%= modelName %>Controller = {
         if (!req.files.picture) {
             return res.status(400).send({
                 status: 'error',
-                message: 'No hay parametro: logo',
-                file_name
+                message: MSG["NO-PARAM"]
             });
         }
 
         if (!id || !fieldname) {
           return res.status(400).send({
             status: "error",
-            message: "Parámetros de ruta, son incorrectos",
+            message: MSG["NO-PARAM"]
           });
         }
 
@@ -475,7 +476,7 @@ var <%= modelName %>Controller = {
         if (!(fieldname in validFields)) {
           return res.status(400).send({
             status: "error",
-            message: "Parámetros de ruta, son incorrectos"
+            message: MSG["NO-DATA"]
           });
         }
 
@@ -493,7 +494,6 @@ var <%= modelName %>Controller = {
             //Archivo aceptable
 
             var query = { _id: { $eq: id } };
-            // licenseCard | insuranceCard
 
             var command = { $set: { [fieldname]: file_name } };
 
@@ -501,12 +501,12 @@ var <%= modelName %>Controller = {
                 if (err)
                   return res.status(500).send({
                     status: "error",
-                    message: err.message,
+                    message: MSG["500"] + err.message
                   });
                 if (doc) {
                   var object = JSON.parse(JSON.stringify(doc._doc));
                   oldvalue = object[fieldname];
-                  oldvalue = "/uploads/picture/" + oldvalue;
+                  oldvalue = "<%= UploadPath %>" + oldvalue;
                   console.log(`Deleting: ${oldvalue}`);
                   fs.unlinkSync(oldvalue);
                  }});
@@ -520,7 +520,7 @@ var <%= modelName %>Controller = {
 
                 return res.status(500).send({
                   status: "error",
-                  message: err.message,
+                  message: MSG["500"] + err.message
                 });
               }
 
@@ -529,13 +529,13 @@ var <%= modelName %>Controller = {
 
                 return res.status(404).send({
                   status: "error",
-                  message: "No se pudo encontrar el registro",
+                  message: MSG["NO-DATA"]
                 });
               }
 
               return res.status(200).send({
                 status: "ok",
-                updated: updatedObject,
+                data: updatedObject
               });
             }
           );
@@ -546,10 +546,9 @@ var <%= modelName %>Controller = {
 
           fs.unlinkSync(file_path);
 
-          return res.status(400).send({
+          return res.status(415).send({
             status: "error",
-            message: "Tipo de archivo no es imagen",
-            file_name,
+            message: MSG["FILE-TYPE"]
           });
         }
     },
@@ -597,7 +596,7 @@ var <%= modelName %>Controller = {
        if (validator.isEmpty(file)) {
            return (res.status(400).send({
                status: "error",
-               message: "falta el nombre del archivo"
+               message: MSG["NO-PARAM"]
            }));
        }
 
@@ -609,8 +608,7 @@ var <%= modelName %>Controller = {
 
                return res.status(404).send({
                    status: 'error',
-                   message: 'archivo no encontrado',
-                   path: path_file
+                   message: MSG["404"] + ": " + path_file
                });
            }
 

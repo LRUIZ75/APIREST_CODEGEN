@@ -30,7 +30,7 @@ public string AuthOpenApi()
 
 var express = require('express');
 <% if(this.UseAuthMiddleware){ %>
-const { verify } = require('../middelware/access.middleware');
+const { verify } = require('../middleware/access.middleware');
 <% } %>
 
 var <%= modelName %>Controller = require('../controllers/<%= modelName %>.controller');
@@ -56,7 +56,7 @@ router.post('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.a
 router.put('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.edit<%= ModelName %>); //UPDATE
 
 router.get('/<%= modelName %>/:id?', <%=AuthOpenApi()%><%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
-router.get('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
+//router.get('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
 <%if(IncludePictureSetterGetter){ %>router.get('/<%= modelName %>/picture/:filename', <%= modelName %>Controller.getPicture); //RETRIEVE IMAGE <%} %>
 
 router.delete('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.delete<%= ModelName %>); //DELETE
