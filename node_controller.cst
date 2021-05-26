@@ -404,7 +404,7 @@ var <%= modelName %>Controller = {
      *   put:
      *     tags: 
      *       - <%= ModelName %>
-     *     summary: UPLOAD <%= ModelName.ToUpper() %> <%= PictureFieldName.ToUpper() %> BY ID<%=AuthOpenApi()%>
+     *     summary: UPLOAD <%= ModelName.ToUpper() %> IMAGE BY FIELDNAME AND ID<%=AuthOpenApi()%>
      *     requestBody:
      *       content:
      *         multipart/form-data:
@@ -562,7 +562,7 @@ var <%= modelName %>Controller = {
      *   get:
      *     tags: 
      *       - <%= ModelName %>
-     *     summary: GET <%= ModelName.ToUpper() %> PICTURE BY FILENAME
+     *     summary: GET <%= ModelName.ToUpper() %> IMAGE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename
