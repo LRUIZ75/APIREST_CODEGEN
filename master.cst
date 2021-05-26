@@ -4,22 +4,25 @@ Author: Luis Danilo Ruiz Tórrez
 --%>
 <%@ CodeTemplate Language="C#" TargetLanguage="JavaScript" Description="Generates a set of model - controller - routes." OutputType="None" %>
 
-<%@ Property Name="OutputDirectory" Type="System.String" Default=".\RootFolder" Category="3. Output Options" Description="Path to root folder." %>
-<%@ Property Name="FilesPrefix" Type="System.String" Default="modelname" Category="3. Output Options" Description="Defines what prefix to be used with outputs files." %>
 
 <%@ Property Name="GenerateModel" Type="System.Boolean" Default="true" Category="1. General Options" Description="Generar Modelo?" %>
 <%@ Property Name="GenerateController" Type="System.Boolean" Default="true" Category="1. General Options" Description="Generar Controlador?" %>
 <%@ Property Name="UseAuthMiddleware" Type="System.Boolean" Default="true" Category="1. General Options" Description="Usar middleware de autenticación en el controlador y rutas?" %>
 <%@ Property Name="GenerateRoute" Type="System.Boolean" Default="true" Category="1. General Options" Description="General Rutas?" %>
-<%@ Property Name="ModelName" Type="System.String" Default="Modelname"  Category="1. Model Options" Description="Nombre del modelo." %>
-<%@ Property Name="ModelDescription" Type="System.String" Default="a model name item" Category="1. Model Options" Description="model item description" %>
-<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Default="true" Category="2. Getter & Setter for Images" Description="include setter and getter for images?" %>
-<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="2. Getter & Setter for Images" Description="Image fieldname as in data model" %>
-<%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="2. Getter & Setter for Images" Description="Path to upload folder for image file" %>
 
-<%@ Property Name="SchemaDef" Type="List<String>" Category="1. Model Options" Optional="True" Default="['propertyName:','type: Boolean','example:','type: String']"
+<%@ Property Name="ModelName" Type="System.String" Default="Modelname"  Category="2. Model Options" Description="Nombre del modelo." %>
+<%@ Property Name="ModelDescription" Type="System.String" Default="a model name item" Category="2. Model Options" Description="model item description" %>
+<%@ Property Name="SchemaDef" Type="List<String>" Category="2. Model Options" Optional="True" Default="['propertyName:','type: Boolean','example:','type: String']"
 Description="Schema definitions: even lines are properties as in ""fieldname:"" - odd lines are typedefs as in ""type: <datatype>""" %>
 
+<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Default="true" Category="3. Controller Options" Description="include setter and getter for images?" %>
+<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="3. Controller Options" Description="Image fieldname as in data model" %>
+<%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="3. Controller Options" Description="Path to upload folder for image file" %>
+
+
+<%@ Property Name="OutputDirectory" Type="System.String" Default=".\RootFolder" Category="4. Output Options" Description="Path to root folder." %>
+<%@ Property Name="FilesPrefix" Type="System.String" Default="modelname" Category="4. Output Options" Description="Defines what prefix to be used with outputs files." %>
+<%@ Property Name="AuthorName" Type="System.String" Default="Luis Danilo Ruiz Tórrez" Category="4. Output Options" Description="Author Name" %>
 
 <%@ Register Name="ControllerTemplate" Template="node_controller.cst" %>
 <%@ Register Name="ModelTemplate" Template="node_model.cst" %>

@@ -4,9 +4,12 @@ Author: Luis Danilo Ruiz Tórrez
 Description: Modelo de Datos de API basado en Node.js
 --%>
 <%@ Template Language="CS" TargetLanguage="JavaScript" Description="Genera un modelo de datos"%>
-<%@ Property Name="ModelName" Type="System.String" Default="Modelname" Category="1. Options" Description="Nombre del modelo." %>
-<%@ Property Name="SchemaDef" Type="List<String>" Optional="True" Category="1. Options" 
+<%@ Property Name="ModelName" Type="System.String" Default="Modelname" Category="2. Model Options" Description="Nombre del modelo." %>
+<%@ Property Name="SchemaDef" Type="List<String>" Optional="True" Category="2. Model Options" 
 Description="Requiere de dos líneas por campo; 1. Nombre del campo seguido de "":"" ; 2. Declaración de tipo ""type: <datatype>""" %>
+
+<%@ Property Name="AuthorName" Type="System.String" Default="Luis Danilo Ruiz Tórrez" Category="4. Output Options" Description="Author Name" %>
+
 
 <%@ Assembly Name="CodeSmith.BaseTemplates" %>
 <%@ Assembly Name="CodeSmith.CustomProperties" %>
@@ -16,7 +19,7 @@ Description="Requiere de dos líneas por campo; 1. Nombre del campo seguido de "
 <%@ Import Namespace="System.Collections.Generic" %>
 <% DateTime startTime = DateTime.Now;%>
 // Last Updated: <%= startTime %>
-// Updated By  : @YourName
+// Updated By  : <%= AuthorName %>
 'use strict'
 
 const mongoose = require('mongoose');
@@ -24,12 +27,12 @@ const validator = require('validator');
 
 const Schema = mongoose.Schema;
 
-//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 const <%= ModelName %>Schema = Schema({
     <%= GetSchema(SchemaDef)%>
 });
 
-//ToDo: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
 /**
  * @swagger
  * components:

@@ -5,11 +5,17 @@ Description: Agregar los métodos CRUD para un controlador de API basado en Node
 --%>
 <%@ Template Language="CS" TargetLanguage="JavaScript" Description="Genera un controlador api para un modelo de datos"%>
 <%@ Property Name="UseAuthMiddleware" Type="System.Boolean" Default="true" Category="1. General Options" Description="Usar middleware de autenticación en el controlador y rutas?" %>
-<%@ Property Name="ModelName" Type="System.String" Category="Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
-<%@ Property Name="ModelDescription" Type="System.String"  Category="Options" Description="Descripción del modelo" %>
-<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="Images" Description="Incluir los métodos set y get para imágenes??" %>
-<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="Images" Description="Nombre del campo imagen" %>
-<%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="Images" Description="Ruta de carga de la imagen" %>
+
+<%@ Property Name="ModelName" Type="System.String" Category="2. Model Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
+<%@ Property Name="ModelDescription" Type="System.String"  Category="2. Model Options" Description="Descripción del modelo" %>
+
+<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="3. Controller Options" Description="Incluir los métodos set y get para imágenes??" %>
+<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="3. Controller Options" Description="Nombre del campo imagen" %>
+<%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="3. Controller Options" Description="Ruta de carga de la imagen" %>
+
+
+<%@ Property Name="AuthorName" Type="System.String" Default="Luis Danilo Ruiz Tórrez" Category="4. Output Options" Description="Author Name" %>
+
 <%@ Import Namespace="System"%>
 <%@ Import NameSpace="System.IO" %>
 <%    string modelName = ModelName.ToLower(); %>
@@ -28,7 +34,7 @@ public string AuthOpenApi()
 <%-- INICIA EL CONTROLADOR --%>
 <% DateTime startTime = DateTime.Now;%>
 // Last Updated: <%= startTime %>
-// Updated By  : @YourName
+// Updated By  : <%= AuthorName %>
 'use strict'
 
 const <%= modelName %>Model = require('../models/<%= modelName %>.model');
@@ -38,6 +44,7 @@ const path = require('path');
 const { ObjectId } = require('mongodb');
 const { findOneAndDelete } = require('../models/<%= modelName %>.model');
 const  MSG  = require("../modules/message.module");
+const Log = require("cabin");
 
 
 /**
@@ -59,7 +66,7 @@ var <%= modelName %>Controller = {
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: <%= ModelName %> Id
+     *         description: <%= ModelName %> ID
      *         required: false
      *         schema:
      *           type: string
@@ -239,7 +246,7 @@ var <%= modelName %>Controller = {
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "<%= ModelName %> Id"
+     *         description: "<%= ModelName %> ID"
      *         type: string
      *         required: true
      *     requestBody:
@@ -327,7 +334,7 @@ var <%= modelName %>Controller = {
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "<%= ModelName %> Id"
+     *         description: "<%= ModelName %> ID"
      *         type: string
      *         required: true
      *     responses:
@@ -365,7 +372,7 @@ var <%= modelName %>Controller = {
 
         var query = { '_id': { $eq: id } };
 
-        <%= modelName %>.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        <%= modelName %>Model.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -449,7 +456,6 @@ var <%= modelName %>Controller = {
             } */
             
         //recojer fichero de petición
-        var file_name = 'Imagen no proporcionada...';
         var id = req.params.id;
         var fieldname = req.params.field;
 
@@ -473,7 +479,7 @@ var <%= modelName %>Controller = {
         //TODO: Revisar y controlar los campos válidos para imagenes de la colección
         var validFields = ["<%= PictureFieldName %>"];
 
-        if (!(fieldname in validFields)) {
+        if (!(validFields.includes(fieldname))) {
           return res.status(400).send({
             status: "error",
             message: MSG["NO-DATA"]
@@ -482,11 +488,8 @@ var <%= modelName %>Controller = {
 
         //conseguir nombre y extensión del archivo
         var file_path = req.files.picture.path;
-
         var file_name = path.basename(file_path);
-
         var file_ext = path.extname(file_name).toLowerCase();
-        var oldValue = "";
 
         const validExtensions = ['.png','.jpg', '.jpeg', '.webp', '.gif'];
         if (validExtensions.includes(file_ext)) 
@@ -497,26 +500,27 @@ var <%= modelName %>Controller = {
 
             var command = { $set: { [fieldname]: file_name } };
 
-            <%= modelName %>.findOne(query, (err, doc) => {
+            <%= modelName %>Model.findOne(query, (err, doc) => {
                 if (err)
                   return res.status(500).send({
                     status: "error",
                     message: MSG["500"] + err.message
                   });
                 if (doc) {
-                  var object = JSON.parse(JSON.stringify(doc._doc));
-                  oldvalue = object[fieldname];
-                  oldvalue = "<%= UploadPath %>" + oldvalue;
-                  console.log(`Deleting: ${oldvalue}`);
-                  fs.unlinkSync(oldvalue);
+                      var object = JSON.parse(JSON.stringify(doc._doc));
+                      let oldvalue = "<%= UploadPath %>" + object[fieldname];
+
+                      console.log(`Deleting: ${oldvalue}`);
+                      if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);              
                  }});
-         <%= modelName %>.findOneAndUpdate(
+                 
+         <%= modelName %>Model.findOneAndUpdate(
             query,
             command,
             { new: true },
             (err, updatedObject) => {
               if (err) {
-                fs.unlinkSync(file_path);
+                if (fs.existsSync(file_path)) fs.unlinkSync(file_path);
 
                 return res.status(500).send({
                   status: "error",
@@ -525,7 +529,7 @@ var <%= modelName %>Controller = {
               }
 
               if (!updatedObject) {
-                fs.unlinkSync(file_path);
+                if (fs.existsSync(file_path)) fs.unlinkSync(file_path);
 
                 return res.status(404).send({
                   status: "error",
@@ -540,11 +544,9 @@ var <%= modelName %>Controller = {
             }
           );
         } else {
-          //Archivo no aceptado
+          //Archivo no aceptado -> Borrar el archivo
 
-          //Borrar el archivo
-
-          fs.unlinkSync(file_path);
+          if (fs.existsSync(file_path)) fs.unlinkSync(file_path);
 
           return res.status(415).send({
             status: "error",
@@ -556,7 +558,7 @@ var <%= modelName %>Controller = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>/picture/{filename}:
+     * /api/<%= modelName %>/images/{filename}:
      *   get:
      *     tags: 
      *       - <%= ModelName %>

@@ -5,11 +5,16 @@ Description: Agregar las rutas parciales para un controlador y su modelo
 --%>
 <%@ Template Language="CS" TargetLanguage="JavaScript" Description="Genera las rutas para el controlador anterior"%>
 <%@ Property Name="UseAuthMiddleware" Type="System.Boolean" Default="true" Category="1. General Options" Description="Usar middleware de autenticación en el controlador y rutas?" %>
-<%@ Property Name="ModelName" Type="System.String" Category="Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
-<%@ Property Name="ModelDescription" Type="System.String"  Category="Options" Description="Descripción del modelo" %>
-<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="Images" Description="Incluir los métodos set y get para imágenes??" %>
-<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="Images" Description="Nombre del campo imagen" %>
-<%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="Images" Description="Ruta de carga de la imagen" %>
+<%----%>
+<%@ Property Name="ModelName" Type="System.String" Category="2. Model Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
+<%@ Property Name="ModelDescription" Type="System.String"  Category="2. Model Options" Description="Descripción del modelo" %>
+
+<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="3. Controller Options" Description="Incluir los métodos set y get para imágenes??" %>
+<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="3. Controller Options" Description="Nombre del campo imagen" %>
+<%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="3. Controller Options" Description="Ruta de carga de la imagen" %>
+
+<%@ Property Name="AuthorName" Type="System.String" Default="Luis Danilo Ruiz Tórrez" Category="4. Output Options" Description="Author Name" %>
+
 <%@ Import Namespace="System"%>
 <%    string modelName = ModelName.ToLower(); %>
 <script runat="template">
@@ -25,7 +30,7 @@ public string AuthOpenApi()
 </script>
 <% DateTime startTime = DateTime.Now;%>
 // Last Updated: <%= startTime %>
-// Updated By  : @YourName
+// Updated By  : <%= AuthorName %>
 'use strict'
 
 var express = require('express');
@@ -48,18 +53,16 @@ D for Delete: HTTP DELETE
 */
 
 
-
 // <%= ModelName.ToUpper()  %>
-router.post('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.add<%= ModelName %>); //CREATE
+router.post('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.add<%= ModelName %>); //CREATE <%= ModelName.ToUpper() %>
 
-<%if(IncludePictureSetterGetter){ %>router.put('/<%= modelName %>/:field/:id', [<%=AuthOpenApi()%> md_uploadpictures], <%= modelName %>Controller.setPicture); //UPDATE IMAGE <%} %>
-router.put('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.edit<%= ModelName %>); //UPDATE
+<%if(IncludePictureSetterGetter){ %>router.put('/<%= modelName %>/:field/:id', [<%=AuthOpenApi()%> md_uploadpictures], <%= modelName %>Controller.setPicture); //UPDATE <%= ModelName.ToUpper() %> IMAGE <%} %>
+router.put('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.edit<%= ModelName %>); //UPDATE <%= ModelName.ToUpper() %>
 
-router.get('/<%= modelName %>/:id?', <%=AuthOpenApi()%><%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
-//router.get('/<%= modelName %>', <%=AuthOpenApi()%> <%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE
-<%if(IncludePictureSetterGetter){ %>router.get('/<%= modelName %>/picture/:filename', <%= modelName %>Controller.getPicture); //RETRIEVE IMAGE <%} %>
+router.get('/<%= modelName %>/:id?', <%=AuthOpenApi()%><%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE <%= ModelName.ToUpper() %>
+<%if(IncludePictureSetterGetter){ %>router.get('/<%= modelName %>/images/:filename', <%= modelName %>Controller.getPicture); //RETRIEVE <%= ModelName.ToUpper() %> IMAGE <%} %>
 
-router.delete('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.delete<%= ModelName %>); //DELETE
+router.delete('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.delete<%= ModelName %>); //DELETE <%= ModelName.ToUpper() %>
 
 
 module.exports = router;
