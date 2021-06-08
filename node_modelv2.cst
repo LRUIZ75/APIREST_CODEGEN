@@ -1,0 +1,64 @@
+﻿<%-- 
+Name: Node.js Data Model for API
+Author: Luis Danilo Ruiz Tórrez
+Description: Modelo de Datos de API basado en Node.js
+--%>
+<%@ Template Language="CS" TargetLanguage="JavaScript" Description="Genera un modelo de datos"%>
+<%@ Property Name="ModelName" Type="System.String" Default="Modelname" Category="2. Model Options" Description="Nombre del modelo" %>
+
+<%@ Property Name="MongooseSchema" Type="System.String"  Editor="System.ComponentModel.Design.MultilineStringEditor, System.Design" Optional="True" Default="{}" Category="2. Model Options" 
+Description="JSON a Mongoose Schema en ""https://tools.w3cub.com/json-to-mongoose""" %>
+<%@ Property Name="SwaggerSchema" Type="System.String"  Editor="System.ComponentModel.Design.MultilineStringEditor, System.Design" Optional="True" Default="" Category="2. Model Options" 
+Description="JSON a Swagger Schema en ""https://swagger-toolbox.firebaseapp.com/""" %>
+
+<%@ Property Name="AuthorName" Type="System.String" Default="Luis Danilo Ruiz Tórrez" Category="4. Output Options" Description="Author Name" %>
+
+
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+
+<%@ Import Namespace="CodeSmith.CustomProperties" %>
+<%@ Import Namespace="CodeSmith.BaseTemplates" %>
+<%@ Import Namespace="System.Collections.Generic" %>
+<% DateTime startTime = DateTime.Now;%>
+// Last Updated: <%= startTime %>
+// Updated By  : <%= AuthorName %>
+'use strict'
+
+const mongoose = require('mongoose');
+const validator = require('validator');
+
+const Schema = mongoose.Schema;
+
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+const <%= ModelName %>Schema = Schema(<%= MongooseSchema %>);
+
+//TODO: Una vez generado, estos modelos requeren modificación manual para ajustar sus propiedades y validaciones!!!
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     <%= ModelName %>:
+<%= FormatYAMLSwaggerSchema( SwaggerSchema ) %>
+ */
+
+module.exports = mongoose.model('<%= ModelName %>',<%= ModelName %>Schema);
+// mongoDB creará la collección, con documentos de estructura del modelo.
+
+<script runat="template">
+// My methods here.
+
+
+public string FormatYAMLSwaggerSchema(string YAML)
+{
+    string output ="";
+    string[] Lines = YAML.Split(System.Environment.NewLine.ToCharArray());
+    foreach(string Line in Lines){
+        if(Line.Trim().Length > 0)
+            output += " *     " + Line + Environment.NewLine ;
+    }
+    return output;
+}
+
+
+</script>

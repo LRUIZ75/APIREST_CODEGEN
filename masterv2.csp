@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<codeSmith xmlns="http://www.codesmithtools.com/schema/csp.xsd">
+  <propertySets>
+    <propertySet name="masterv2.js" output="masterv2.js" template="C:\Users\lruiz\Documents\CONSULTORIAS\API CODEGEN\masterv2.cst">
+      <property name="GenerateModel">True</property>
+      <property name="GenerateController">True</property>
+      <property name="UseAuthMiddleware">True</property>
+      <property name="GenerateRoute">True</property>
+      <property name="ModelName">Settings</property>
+      <property name="ModelDescription">Settings Data</property>
+      <property name="MongooseSchema">{
+  "company": {
+    "type": "ObjectId"
+  },
+  "packageTare": {
+    "type": "Number"
+  },
+  "bigBagTare": {
+    "type": "Number"
+  },
+  "processingUM": {
+    "type": "String"
+  },
+  "salesUM": {
+    "type": "String"
+  },
+  "processBatchSize": {
+    "type": "Number"
+  },
+  "isActive": {
+    "type": "Boolean"
+  }
+}</property>
+      <property name="IncludePictureSetterGetter">False</property>
+      <property name="PictureFieldName">picture</property>
+      <property name="UploadPath">./uploads/picture/</property>
+      <property name="OutputDirectory">C:\Users\lruiz\Documents\CONSULTORIAS\TRACEORGANIC API</property>
+      <property name="FilesPrefix">vehicle</property>
+      <property name="AuthorName">Luis Danilo Ruiz Tórrez</property>
+      <property name="SwaggerSchema">  required: 
+    - "company"
+    - "packageTare"
+    - "bigBagTare"
+    - "processingUM"
+    - "salesUM"
+    - "processBatchSize"
+    - "isActive"
+  properties: 
+    company: 
+      type: "string"
+      example: "123456123456123456123456"
+    packageTare: 
+      type: "number"
+      example: 0.05
+    bigBagTare: 
+      type: "number"
+      example: 2.2
+    processingUM: 
+      type: "string"
+      example: "QQ"
+    salesUM: 
+      type: "string"
+      example: "KG"
+    processBatchSize: 
+      type: "number"
+      example: 650
+    isActive: 
+      type: "boolean"
+      example: true</property>
+    </propertySet>
+  </propertySets>
+</codeSmith>

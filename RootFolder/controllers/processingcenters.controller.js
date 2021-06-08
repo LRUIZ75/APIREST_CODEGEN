@@ -1,74 +1,39 @@
-﻿<%-- 
-Name: Node.js Controller for API
-Author: Luis Danilo Ruiz Tórrez
-Description: Agregar los métodos CRUD para un controlador de API basado en Node.js
---%>
-<%@ Template Language="CS" TargetLanguage="JavaScript" Description="Genera un controlador api para un modelo de datos"%>
-<%@ Property Name="UseAuthMiddleware" Type="System.Boolean" Default="true" Category="1. General Options" Description="Usar middleware de autenticación en el controlador y rutas?" %>
-
-<%@ Property Name="ModelName" Type="System.String" Category="2. Model Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
-<%@ Property Name="ModelDescription" Type="System.String"  Category="2. Model Options" Description="Descripción del modelo" %>
-
-<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="3. Controller Options" Description="Incluir los métodos set y get para imágenes??" %>
-<%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="3. Controller Options" Description="Nombre del campo imagen" %>
-<%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="3. Controller Options" Description="Ruta de carga de la imagen" %>
-
-
-<%@ Property Name="AuthorName" Type="System.String" Default="Luis Danilo Ruiz Tórrez" Category="4. Output Options" Description="Author Name" %>
-
-<%@ Import Namespace="System"%>
-<%@ Import NameSpace="System.IO" %>
-<%    string modelName = ModelName.ToLower(); %>
-<script runat="template">
-// My methods here.
-
-
-public string AuthOpenApi()
-{
-   if(this.UseAuthMiddleware)
-       return "\n     *     security:\n     *       - BearerAuth: []";
-   return "";
-}
-
-</script>
-<%-- INICIA EL CONTROLADOR --%>
-<% DateTime startTime = DateTime.Now;%>
-// Last Updated: <%= startTime %>
-// Updated By  : <%= AuthorName %>
+﻿// Last Updated: 07/06/2021 01:22:45 a. m.
+// Updated By  : Luis Danilo Ruiz Tórrez
 'use strict'
 
-const <%= modelName %>Model = require('../models/<%= modelName %>.model');
+const processingcentersModel = require('../models/processingcenters.model');
 const validator = require('validator');
 const fs = require('fs');
 const path = require('path');
 const { ObjectId } = require('mongodb');
-const { findOneAndDelete } = require('../models/<%= modelName %>.model');
+const { findOneAndDelete } = require('../models/processingcenters.model');
 const  MSG  = require("../modules/message.module");
 const Log = require("cabin");
-const jsonexport = require("jsonexport");
-const securable = require("../modules/security.module");
 
 
 /**
  * @swagger
  * tags:
- *   name: <%= ModelName %>
- *   description: <%= ModelDescription %>
+ *   name: ProcessingCenters
+ *   description: Processing Centers Data
  */
 
-var <%= modelName %>Controller = {
+var processingcentersController = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>/{id}:
+     * /api/processingcenters/{id}:
      *   get:
      *     tags: 
-     *       - <%= ModelName %>
-     *     summary: GET ONE <%= ModelName.ToUpper() %> BY ID <%=AuthOpenApi()%>
+     *       - ProcessingCenters
+     *     summary: GET ONE PROCESSINGCENTERS BY ID 
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: <%= ModelName %> ID
+     *         description: ProcessingCenters ID
      *         required: false
      *         schema:
      *           type: string
@@ -78,7 +43,7 @@ var <%= modelName %>Controller = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/<%= ModelName %>"
+     *               $ref: "#/components/schemas/ProcessingCenters"
      *       404:
      *         description: Not Found
      *       500:
@@ -87,11 +52,13 @@ var <%= modelName %>Controller = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>:
+     * /api/processingcenters:
      *   get:
      *     tags: 
-     *       - <%= ModelName %>
-     *     summary: GET ALL <%= ModelName.ToUpper() %><%=AuthOpenApi()%>
+     *       - ProcessingCenters
+     *     summary: GET ALL PROCESSINGCENTERS
+     *     security:
+     *       - BearerAuth: []
      *     responses:
      *       200:
      *         description: OK
@@ -100,14 +67,14 @@ var <%= modelName %>Controller = {
      *             schema:
      *               type: array
      *               items:
-     *                 $ref: "#/components/schemas/<%= ModelName %>"
+     *                 $ref: "#/components/schemas/ProcessingCenters"
      *       404:
      *         description: Not Found
      *       500:
      *         description: Internal Server Error
      */
 
-    get<%= ModelName %>: (req, res) => {
+    getProcessingCenters: (req, res) => {
 
         var id = req.params.id;
         
@@ -127,9 +94,7 @@ var <%= modelName %>Controller = {
 
         console.log(query);
 
-        <%= modelName %>Model.find()
-        .where(query)
-        .exec((err, objects) => {
+        processingcentersModel.find(query, (err, objects) => {
 
 
             if (err) {
@@ -145,7 +110,7 @@ var <%= modelName %>Controller = {
                 return (res.status(404).send({
                     status: "error",
                     message: MSG["NO-DATA"],
-                    links: [ process.env.API_URL + "doc/#/<%= ModelName %>/post_api_<%= modelName %>" ]    
+                    links: [ process.env.API_URL + "doc/#/ProcessingCenters/post_api_processingcenters" ]    
                 }
 
                 ));
@@ -160,112 +125,34 @@ var <%= modelName %>Controller = {
     },
 
 
-  /**
-   * @openapi
-   * /api/csv/<%= modelName %>:
-   *   get:
-   *     tags:
-   *       - <%= ModelName %>
-   *     summary: GET ALL <%= ModelName.ToUpper() %><%=AuthOpenApi()%> AS CSV
-   *     security:
-   *       - BearerAuth: []
-   *     responses:
-   *       200:
-   *         description: OK
-   *         content:
-   *           application/text:
-   *             schema:
-   *               type: array
-   *               items:
-   *                 $ref: "#/components/schemas/<%= ModelName %>"
-   *       401:
-   *         description: Not Authorized
-   *       404:
-   *         description: Not Found
-   *       500:
-   *         description: Internal Server Error
-   */
-
-   get<%= ModelName %>CSV: async (req, res) => {
-
-    var payload = req.payload;
-    
-    var isSuper = await securable.hasRole("superadmin", payload.roles);
-    var isData =  await securable.hasRole("dataretriever", payload.roles);
-    
-    if (!(isSuper || isData)) {
-      return res.status(401).send({
-        status: "error",
-        message: MSG["NO-PERM"],
-      });
-    }
-
-    var filterByCompany = {};
-    if(isData){
-      filterByCompany = { _id: { $eq: payload.company} };}
-
-    console.log(filterByCompany);
-
-    
-    <%= modelName %>Model.find()
-    .where(filterByCompany)
-    .exec((err, objects) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          message: MSG["500"] + err.message,
-        });
-      }
-
-      if (!objects || objects.length == 0) {
-        return res.status(404).send({
-          status: "error",
-          message: MSG["NO-DATA"],
-          links: [ process.env.API_URL + "doc/#/<%= ModelName %>/post_api_<%= modelName %>" ]   
-        });
-      } else {
-        let json = JSON.parse(JSON.stringify(objects));
-        res.setHeader("content-type", "text/plain");
-        jsonexport(json, function (err, csv) {
-          if (err) {
-            return res.status(500).send({
-              status: "error",
-              message: MSG["500"] + err.message,
-            });
-          }
-          if (csv) return res.status(200).send(csv);
-        });
-      }
-    });
-  },
-
-
     /**
      * @openapi
-     * /api/<%= modelName %>:
+     * /api/processingcenters:
      *   post:
      *     tags: 
-     *       - <%= ModelName %>
-     *     summary: ADD NEW <%= ModelName.ToUpper() %><%=AuthOpenApi()%>
+     *       - ProcessingCenters
+     *     summary: ADD NEW PROCESSINGCENTERS
+     *     security:
+     *       - BearerAuth: []
      *     requestBody:
      *       required: true
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/<%= ModelName %>"
+     *             $ref: "#/components/schemas/ProcessingCenters"
      *     responses:
      *       201:
      *         description: Created
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/<%= ModelName %>"
+     *               $ref: "#/components/schemas/ProcessingCenters"
      *       400:
      *         description: Bad Request
      *       500:
      *         description: Internal Server Error
      */
-    add<%= ModelName %>: (req, res) => {
+    addProcessingCenters: (req, res) => {
 
 
         var data = req.body;
@@ -290,12 +177,12 @@ var <%= modelName %>Controller = {
         }
 
 
-        var new<%= ModelName %> = new <%= modelName %>Model(data);
+        var newProcessingCenters = new processingcentersModel(data);
 
 
 
         //INTENTAR GUARDAR EL NUEVO OBJETO
-        new<%= ModelName %>.save((err, storedObject) => {
+        newProcessingCenters.save((err, storedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -322,15 +209,17 @@ var <%= modelName %>Controller = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>/{id}:
+     * /api/processingcenters/{id}:
      *   put:
      *     tags: 
-     *       - <%= ModelName %>
-     *     summary: UPDATE ONE <%= ModelName.ToUpper() %> BY ID<%=AuthOpenApi()%>
+     *       - ProcessingCenters
+     *     summary: UPDATE ONE PROCESSINGCENTERS BY ID
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "<%= ModelName %> ID"
+     *         description: "ProcessingCenters ID"
      *         type: string
      *         required: true
      *     requestBody:
@@ -338,14 +227,14 @@ var <%= modelName %>Controller = {
      *       content: 
      *         application/json:
      *           schema:
-     *             $ref: "#/components/schemas/<%= ModelName %>"
+     *             $ref: "#/components/schemas/ProcessingCenters"
      *     responses:
      *       200:
      *         description: OK
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/<%= ModelName %>"
+     *               $ref: "#/components/schemas/ProcessingCenters"
      *       400:
      *         description: Bad Request
      *       404:
@@ -353,7 +242,7 @@ var <%= modelName %>Controller = {
      *       500:
      *         description: Internal Server Error
      */
-    edit<%= ModelName %>: (req, res) => {
+    editProcessingCenters: (req, res) => {
 
         var id = req.params.id;
         var data = req.body;
@@ -383,7 +272,7 @@ var <%= modelName %>Controller = {
         var query = { '_id': { $eq: id } };
         var command = { $set: data };
 
-        <%= modelName %>Model.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
+        processingcentersModel.findOneAndUpdate(query, command, { new: true }, (err, updatedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -410,15 +299,17 @@ var <%= modelName %>Controller = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>/{id}:
+     * /api/processingcenters/{id}:
      *   delete:
      *     tags: 
-     *       - <%= ModelName %>
-     *     summary: DELETE ONE <%= ModelName.ToUpper() %> BY ID<%=AuthOpenApi()%>
+     *       - ProcessingCenters
+     *     summary: DELETE ONE PROCESSINGCENTERS BY ID
+     *     security:
+     *       - BearerAuth: []
      *     parameters:
      *       - in: path
      *         name: id
-     *         description: "<%= ModelName %> ID"
+     *         description: "ProcessingCenters ID"
      *         type: string
      *         required: true
      *     responses:
@@ -427,7 +318,7 @@ var <%= modelName %>Controller = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/<%= ModelName %>"
+     *               $ref: "#/components/schemas/ProcessingCenters"
      *       400:
      *         description: Bad Request
      *       404:
@@ -435,7 +326,7 @@ var <%= modelName %>Controller = {
      *       500:
      *         description: Internal Server Error
      */
-    delete<%= ModelName %>: (req, res) => {
+    deleteProcessingCenters: (req, res) => {
 
         var payload = req.payload;
         
@@ -456,7 +347,7 @@ var <%= modelName %>Controller = {
 
         var query = { '_id': { $eq: id } };
 
-        <%= modelName %>Model.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
+        processingcentersModel.findOneAndDelete(query, { new: false }, (err, deletedObject) => {
             if (err) {
                 return (res.status(500).send({
                     status: "error",
@@ -480,15 +371,16 @@ var <%= modelName %>Controller = {
         });
     },
     
-<% if(IncludePictureSetterGetter) { %>
 
     /**
      * @openapi
-     * /api/<%= modelName %>/{field}/{id}:
+     * /api/processingcenters/{field}/{id}:
      *   put:
      *     tags: 
-     *       - <%= ModelName %>
-     *     summary: UPLOAD <%= ModelName.ToUpper() %> IMAGE BY FIELDNAME AND ID<%=AuthOpenApi()%>
+     *       - ProcessingCenters
+     *     summary: UPLOAD PROCESSINGCENTERS IMAGE BY FIELDNAME AND ID
+     *     security:
+     *       - BearerAuth: []
      *     requestBody:
      *       content:
      *         multipart/form-data:
@@ -503,11 +395,11 @@ var <%= modelName %>Controller = {
      *         name: field
      *         description: "fieldname for image"
      *         type: string
-     *         default: "<%= PictureFieldName %>"
+     *         default: "picture"
      *         required: true
      *       - in: path
      *         name: id
-     *         description: "<%= ModelName %> Id"
+     *         description: "ProcessingCenters Id"
      *         type: string
      *         required: true
      *     responses:
@@ -516,7 +408,7 @@ var <%= modelName %>Controller = {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: "#/components/schemas/<%= ModelName %>"
+     *               $ref: "#/components/schemas/ProcessingCenters"
      *       400:
      *         description: Bad Request
      *       404:
@@ -561,7 +453,7 @@ var <%= modelName %>Controller = {
 
 
         //TODO: Revisar y controlar los campos válidos para imagenes de la colección
-        var validFields = ["<%= PictureFieldName %>"];
+        var validFields = ["picture"];
 
         if (!(validFields.includes(fieldname))) {
           return res.status(400).send({
@@ -584,7 +476,7 @@ var <%= modelName %>Controller = {
 
             var command = { $set: { [fieldname]: file_name } };
 
-            <%= modelName %>Model.findOne(query, (err, doc) => {
+            processingcentersModel.findOne(query, (err, doc) => {
                 if (err)
                   return res.status(500).send({
                     status: "error",
@@ -592,13 +484,13 @@ var <%= modelName %>Controller = {
                   });
                 if (doc) {
                       var object = JSON.parse(JSON.stringify(doc._doc));
-                      let oldvalue = "<%= UploadPath %>" + object[fieldname];
+                      let oldvalue = "./uploads/pictures/" + object[fieldname];
 
                       console.log(`Deleting: ${oldvalue}`);
                       if (fs.existsSync(oldvalue)) fs.unlinkSync(oldvalue);              
                  }});
                  
-         <%= modelName %>Model.findOneAndUpdate(
+         processingcentersModel.findOneAndUpdate(
             query,
             command,
             { new: true },
@@ -642,11 +534,11 @@ var <%= modelName %>Controller = {
 
     /**
      * @openapi
-     * /api/<%= modelName %>/images/{filename}:
+     * /api/processingcenters/images/{filename}:
      *   get:
      *     tags: 
-     *       - <%= ModelName %>
-     *     summary: GET <%= ModelName.ToUpper() %> IMAGE BY FILENAME
+     *       - ProcessingCenters
+     *     summary: GET PROCESSINGCENTERS IMAGE BY FILENAME
      *     parameters:
      *       - in: path
      *         name: filename
@@ -686,7 +578,7 @@ var <%= modelName %>Controller = {
            }));
        }
 
-       var path_file = '<%= UploadPath %>' + file;
+       var path_file = './uploads/pictures/' + file;
 
        fs.stat(path_file, (err) => {
 
@@ -704,8 +596,7 @@ var <%= modelName %>Controller = {
 
 
     }
-<% } %>
 
 }
 
-module.exports = <%= modelName %>Controller;
+module.exports = processingcentersController;

@@ -61,6 +61,7 @@ router.put('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controlle
 
 router.get('/<%= modelName %>/:id?', <%=AuthOpenApi()%><%= modelName %>Controller.get<%= ModelName %>); //RETRIEVE <%= ModelName.ToUpper() %>
 <%if(IncludePictureSetterGetter){ %>router.get('/<%= modelName %>/images/:filename', <%= modelName %>Controller.getPicture); //RETRIEVE <%= ModelName.ToUpper() %> IMAGE <%} %>
+router.get('/csv/<%= modelName %>', <%=AuthOpenApi()%><%= modelName %>Controller.get<%= ModelName %>CSV); //RETRIEVE <%= ModelName.ToUpper() %> CSV DATA
 
 router.delete('/<%= modelName %>/:id', <%=AuthOpenApi()%> <%= modelName %>Controller.delete<%= ModelName %>); //DELETE <%= ModelName.ToUpper() %>
 

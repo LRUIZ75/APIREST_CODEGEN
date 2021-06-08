@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<codeSmith xmlns="http://www.codesmithtools.com/schema/csp.xsd">
+  <propertySets>
+    <propertySet name="node_modelv2.js" output="node_modelv2.js" template="C:\Users\lruiz\Documents\CONSULTORIAS\API CODEGEN\node_modelv2.cst">
+      <property name="ModelName">Vehicle</property>
+      <property name="MongooseSchema">{
+  "plateNumber": {
+    "type": "String"
+  },
+  "company": {
+    "type": "String"
+  },
+  "type": {
+    "type": "String"
+  },
+  "brand": {
+    "type": "String"
+  },
+  "model": {
+    "type": "String"
+  },
+  "year": {
+    "type": "Number"
+  },
+  "owner": {
+    "type": "String"
+  },
+  "registration": {
+    "type": "String"
+  },
+  "insurance": {
+    "type": "String"
+  },
+  "picture": {
+    "type": "String"
+  },
+  "maxCapacity": {
+    "type": "Number"
+  },
+  "avgVehicleTare": {
+    "type": "Number"
+  },
+  "isActive": {
+    "type": "Boolean"
+  }
+}</property>
+      <property name="AuthorName">Luis Danilo Ruiz Tórrez</property>
+      <property name="SwaggerSchema">  required: 
+    - "plateNumber"
+    - "company"
+    - "type"
+    - "brand"
+    - "model"
+    - "year"
+    - "owner"
+    - "registration"
+    - "insurance"
+    - "picture"
+    - "maxCapacity"
+    - "avgVehicleTare"
+    - "isActive"
+  properties: 
+    plateNumber: 
+      type: "string"
+      example: ""
+    company: 
+      type: "string"
+      example: ""
+    type: 
+      type: "string"
+      example: ""
+    brand: 
+      type: "string"
+      example: ""
+    model: 
+      type: "string"
+      example: ""
+    year: 
+      type: "number"
+      example: 0
+    owner: 
+      type: "string"
+      example: ""
+    registration: 
+      type: "string"
+      example: ""
+    insurance: 
+      type: "string"
+      example: ""
+    picture: 
+      type: "string"
+      example: ""
+    maxCapacity: 
+      type: "number"
+      example: 0
+    avgVehicleTare: 
+      type: "number"
+      example: 0
+    isActive: 
+      type: "boolean"
+      example: true</property>
+    </propertySet>
+  </propertySets>
+</codeSmith>
