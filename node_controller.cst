@@ -125,7 +125,7 @@ var <%= modelName %>Controller = {
 
         var filterByCompany = {};
         if(!isSuper){ //TODO: Usar el campo correspondiente de compañía
-          filterByCompany = { comapany: { $eq: payload.company} };}
+          filterByCompany = { company: { $eq: payload.company} };}
 
         console.log(filterByCompany);
 
@@ -170,31 +170,29 @@ var <%= modelName %>Controller = {
     },
 
 
-  /**
-   * @openapi
-   * /api/csv/<%= modelName %>:
-   *   get:
-   *     tags:
-   *       - <%= ModelName %>
-   *     summary: GET ALL <%= ModelName.ToUpper() %><%=AuthOpenApi()%> AS CSV
-   *     security:
-   *       - BearerAuth: []
-   *     responses:
-   *       200:
-   *         description: OK
-   *         content:
-   *           application/text:
-   *             schema:
-   *               type: array
-   *               items:
-   *                 $ref: "#/components/schemas/<%= ModelName %>"
-   *       401:
-   *         description: Not Authorized
-   *       404:
-   *         description: Not Found
-   *       500:
-   *         description: Internal Server Error
-   */
+    /**
+     * @openapi
+     * /api/csv/<%= modelName %>:
+     *   get:
+     *     tags:
+     *       - <%= ModelName %>
+     *     summary: GET ALL <%= ModelName.ToUpper() %> AS CSV <%=AuthOpenApi()%> 
+     *     responses:
+     *       200:
+     *         description: OK
+     *         content:
+     *           application/text:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: "#/components/schemas/<%= ModelName %>"
+     *       401:
+     *         description: Not Authorized
+     *       404:
+     *         description: Not Found
+     *       500:
+     *         description: Internal Server Error
+     */
 
    get<%= ModelName %>CSV: async (req, res) => {
 
