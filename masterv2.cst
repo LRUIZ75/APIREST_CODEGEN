@@ -11,31 +11,35 @@ Author: Luis Danilo Ruiz Tórrez
 <%@ Property Name="GenerateRoute" Type="System.Boolean" Default="true" Category="1. General Options" Description="General Rutas?" %>
 
 <%@ Property Name="ModelName" Type="System.String" Default="Modelname"  Category="2. Model Options" Description="Nombre del modelo." %>
-<%@ Property Name="ModelDescription" Type="System.String" Default="a model name item" Category="2. Model Options" Description="model item description" %>
+<%@ Property Name="ModelDescription" Type="System.String" Default="ModelName Data" Category="2. Model Options" Description="model item description" %>
 
 <%@ Property Name="MongooseSchema" Type="System.String"  Editor="System.ComponentModel.Design.MultilineStringEditor, System.Design" Optional="True" Default="{}" Category="2. Model Options" 
 Description="JSON a Mongoose Schema en ""https://tools.w3cub.com/json-to-mongoose""" %>
 <%@ Property Name="SwaggerSchema" Type="System.String"  Editor="System.ComponentModel.Design.MultilineStringEditor, System.Design" Optional="True" Default="" Category="2. Model Options" 
 Description="JSON a Swagger Schema en ""https://swagger-toolbox.firebaseapp.com/""" %>
 
+
+<%@ Property Name="IncludeCSVGetter" Type="System.Boolean" Default="false" Category="3. Controller Options" Description="Incluir método get para CSV??" %>
 <%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Default="true" Category="3. Controller Options" Description="include setter and getter for images?" %>
 <%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="3. Controller Options" Description="Image fieldname as in data model" %>
 <%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="3. Controller Options" Description="Path to upload folder for image file" %>
 
 
-<%@ Property Name="OutputDirectory" Type="System.String" Default=".\RootFolder" Category="4. Output Options" Description="Path to root folder." %>
+<%@ Property Name="OutputDirectory" Type="System.String" Default="C:\Users\lruiz\Documents\CONSULTORIAS\TRACEORGANIC API" Category="4. Output Options" Description="Path to root folder." %>
 <%@ Property Name="FilesPrefix" Type="System.String" Default="modelname" Category="4. Output Options" Description="Defines what prefix to be used with outputs files." %>
 <%@ Property Name="AuthorName" Type="System.String" Default="Luis Danilo Ruiz Tórrez" Category="4. Output Options" Description="Author Name" %>
 
 <%@ Register Name="ControllerTemplate" Template="node_controller.cst" %>
 <%@ Register Name="ModelTemplate" Template="node_modelv2.cst" %>
 <%@ Register Name="RouterTemplate" Template="node_routes.cst" %>
-
+<%----%>
 <%@ Assembly Name="SchemaExplorer" %>
 <%@ Assembly Name="System.Design" %>
 <%@ Import NameSpace="System.IO" %>
+<%@ Import NameSpace="System.Windows.Forms" %>
 
 <script runat="template">
+
 
 private int _currentStep = 0;
 // Override the Render method and have it output the sub-templates to file.
@@ -58,14 +62,13 @@ public override void Render(TextWriter writer)
             Directory.CreateDirectory(this.OutputDirectory + "\\models");
         if(this.GenerateRoute)
             Directory.CreateDirectory(this.OutputDirectory + "\\routes");
-
     }
 
     this.Progress.Value = 10;
     
     // Controller
     if(this.GenerateController){
-        Trace.WriteLine("Building controller documentation...");
+        Trace.WriteLine(String.Format("Building {0} Controller ...",this.ModelName));
         ControllerTemplate ControllerTemplate = this.Create<ControllerTemplate>();
         ControllerTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
         this.CopyPropertiesTo(ControllerTemplate);
@@ -75,7 +78,7 @@ public override void Render(TextWriter writer)
     
     // Router
     if(this.GenerateRoute){
-        Trace.WriteLine("Building routes documentation...");
+        Trace.WriteLine(String.Format("Building {0} Routes ...",this.ModelName));
         RouterTemplate RouterTemplate = this.Create<RouterTemplate>();
         RouterTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
         this.CopyPropertiesTo(RouterTemplate);
@@ -87,7 +90,7 @@ public override void Render(TextWriter writer)
     
     // Model
     if(this.GenerateModel){
-        Trace.WriteLine("Building model documentation...");
+       Trace.WriteLine(String.Format("Building {0} Model ...",this.ModelName));
         ModelTemplate ModelTemplate = this.Create<ModelTemplate>();
         ModelTemplate.Progress.OnProgress += new ProgressEventHandler(this.OnProgress);
         this.CopyPropertiesTo(ModelTemplate);
@@ -99,6 +102,7 @@ public override void Render(TextWriter writer)
     
     Trace.WriteLine("Generation complete. Execution time: " + (DateTime.Now - startTime).ToString());
     Trace.WriteLine("To view the output go here: " + this.OutputDirectory);
+    MessageBox.Show("Generation complete. Execution time: " + (DateTime.Now - startTime).ToString(), this.ModelName + " Done!");
 }
 
 public void OnProgress(object sender, ProgressEventArgs e)

@@ -7,9 +7,10 @@ Description: Agregar los métodos CRUD para un controlador de API basado en Node
 <%@ Property Name="UseAuthMiddleware" Type="System.Boolean" Default="true" Category="1. General Options" Description="Usar middleware de autenticación en el controlador y rutas?" %>
 
 <%@ Property Name="ModelName" Type="System.String" Category="2. Model Options" Description="Nombre del modelo. En plural siempre, PascalCase" %>
-<%@ Property Name="ModelDescription" Type="System.String"  Category="2. Model Options" Description="Descripción del modelo" %>
+<%@ Property Name="ModelDescription" Type="System.String" Default="ModelName Data"  Category="2. Model Options" Description="Descripción del modelo" %>
 
-<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Category="3. Controller Options" Description="Incluir los métodos set y get para imágenes??" %>
+<%@ Property Name="IncludePictureSetterGetter" Type="System.Boolean"  Default="false" Category="3. Controller Options" Description="Incluir los métodos set y get para imágenes??" %>
+<%@ Property Name="IncludeCSVGetter" Type="System.Boolean" Default="false" Category="3. Controller Options" Description="Incluir método get para CSV??" %>
 <%@ Property Name="PictureFieldName" Type="System.String" Default="picture" Category="3. Controller Options" Description="Nombre del campo imagen" %>
 <%@ Property Name="UploadPath" Type="System.String" Default="./uploads/pictures/" Category="3. Controller Options" Description="Ruta de carga de la imagen" %>
 
@@ -170,6 +171,8 @@ var <%= modelName %>Controller = {
     },
 
 
+<% if(IncludeCSVGetter) { %>
+
     /**
      * @openapi
      * /api/csv/<%= modelName %>:
@@ -247,6 +250,7 @@ var <%= modelName %>Controller = {
     });
   },
 
+<% } %>
 
     /**
      * @openapi
